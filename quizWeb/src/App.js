@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import './App.css';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import request from 'superagent';
-import { Router, Route, hashHistory } from 'react-router';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 import QuizPlay from './views/QuizPlay';
+import ContextComponent from './components/ContextComponent';
+import WaitingScreen from './views/WaitingScreen';
 
 injectTapEventPlugin();
 
@@ -14,7 +15,10 @@ class App extends Component {
     return (
      <MuiThemeProvider>
       <Router history={hashHistory}>
-        <Route path='/' component={QuizPlay} />
+        <Route path='/' component={ContextComponent} >
+        	<IndexRoute component={WaitingScreen} />
+          <Route path='quiz' component={QuizPlay} />
+        </Route>
       </Router>
       </MuiThemeProvider>
     );

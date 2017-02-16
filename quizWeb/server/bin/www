@@ -1,0 +1,21 @@
+const express = require('express');
+const app = express();
+const path = require('path');
+const io = require('../io.js');
+const http = require('http');
+const port = process.env.PORT || 8080;
+
+app.use((req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, content-type, Accept");
+	next();
+});
+
+app.use(express.static(path.join(__dirname, '..', '..', 'build')));
+
+const server = http.createServer(app);
+io(server);
+
+server.listen(port, () => {
+	console.log('Express Server is Started');
+})

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
-import { Grid, Row, Col } from 'react-flexbox-grid';
-import { Card, CardHeader } from 'material-ui/Card';
+import { Grid, Row } from 'react-flexbox-grid';
 import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
@@ -14,13 +13,14 @@ const style = {
 		cursor: 'pointer',
 		margin: '6vh 2vh 6vh 5vh',
 		padding: '2vh',
-		fontSize: '20px'
+		fontSize: 20
 	}
 }
 
 const hittry = ['option1', 'option2', 'option3', 'option4'];
 const question = 'Hi how kldsnflkds what is the question? so tell me how you are going to do it';
-const playerinfo = [{ playerName: 'Dali', score: 100 }, { playerName: 'Venus', score: 99 }, { playerName: 'Karan', score: 10 } ];
+const playerinfo = [{ playerName: 'Dali', score: 100 }, { playerName: 'Venus', score: 99 }, { playerName: 'Karan', score: 10 },
+{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Daligfdgfsd', score: 100 } ];
 
 class QuizTile extends Component {
 
@@ -44,7 +44,7 @@ class QuizTile extends Component {
 			timer: this.state.timer - 1
 		}
 		this.setState(timer);
-			if(this.state.timer == 0) {
+			if(this.state.timer === 0) {
 				clearInterval(ab);
 				this.handleNextQuestion();
 			}
@@ -112,7 +112,7 @@ class QuizTile extends Component {
 							{options}
 						</Row>
 				</Grid>
-				<Grid style= {{position: 'fixed', right: '40px', top: '100px', width: '35%'}}>
+				<Grid style={{ position: 'fixed', right: 40, top: 80, width: '35%' }}>
 					<List>
 						<Subheader style={{textAlign: 'center', fontSize: 40, fontWeight: 'bold', marginTop: 20}}>
 							LeaderBoard
