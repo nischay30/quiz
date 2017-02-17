@@ -1,0 +1,1 @@
+const sendScoresToServer = require('./sendScoresToServer')(123);

@@ -16,82 +16,138 @@ const style = {
 		fontSize: 20
 	}
 }
-
-const hittry = ['option1', 'option2', 'option3', 'option4'];
-const question = 'Hi how kldsnflkds what is the question? so tell me how you are going to do it';
-const playerinfo = [{ playerName: 'Dali', score: 100 }, { playerName: 'Venus', score: 99 }, { playerName: 'Karan', score: 10 },
-{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Dali', score: 100 },{ playerName: 'Daligfdgfsd', score: 100 } ];
+const quizId = 123;
 
 class QuizTile extends Component {
+
+	static get contextTypes() {
+		return({
+			router: React.PropTypes.object.isRequired,
+			socket: React.PropTypes.object.isRequired
+		});
+	}
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			timer: 30,
+			timer: 6,
 			showCircularProgress: false,
-			open: false
+			open: false,
+			playerInfo: [],
+			questions: [],
+			question: '',
+			options: [],
+			answer: '',
+			quizEnd: false
 		}
 	}
 
-	handleAnswer (option) {
-		this.setState({showCircularProgress: true, open: true});
+	componentDidMount () {
+		this.context.socket.on('question', (question) => {
+			let questio = question.questions.shift();
+			this.setState({
+				question: questio.question,
+				options: questio.options,
+				answer: questio.answer,
+				timer: questio.timer,
+				questions: question.questions 
+			});
+			this.runTimer();
+		});
+
+		this.context.socket.on('scores', (scores) => {
+			this.setState(scores);
+		});
 	}
 
-
-	componentDidMount () {
+	runTimer() {
 		let ab = setInterval(() => {
 		let timer = {
 			timer: this.state.timer - 1
 		}
 		this.setState(timer);
-			if(this.state.timer === 0) {
+			if(this.state.timer == 0) {
+				console.log('entered');
 				clearInterval(ab);
 				this.handleNextQuestion();
 			}
 		}, 1000);
 	}
 
+	handleAnswer (answeredIndex) {
+		if(answeredIndex + 1 === this.state.answer) {
+			this.context.socket.emit('playerAnswered', '123', 5);
+		}
+		else {
+			this.context.socket.emit('playerAnswered', '123', 0);
+		}
+		this.setState({showCircularProgress: true, open: true});
+	}
+
 	handleNextQuestion() {
-		this.setState({showCircularProgress: false, open: false})
-		console.log('Plz Next Question');
+		console.log(this.state.questions);
+		if(this.state.questions.length == 0) {
+			this.setState({ quizEnd: true, showCircularProgress: false,	open: false });
+		}
+		else {
+		let questio = this.state.questions.shift();
+		this.setState({
+			question: questio.question,
+			options: questio.options,
+			answer: questio.answer,
+			timer: questio.timer,
+			showCircularProgress: false,
+			open: false
+		});
+		this.runTimer();
+		}
+		// this.context.socket.emit('nextQuestion', quizId);
 	}
 
 	render() {
-		const options = hittry.map((option, index) => {
+		const options = this.state.options.map((option, index) => {
 			return (
 					<Paper key={ index }
 					style={style.paper}
 					zDepth={1}
-					onTouchTap={this.handleAnswer.bind(this, option)}
+					onTouchTap={this.handleAnswer.bind(this, index)}
 					>
 						{option}
 					</Paper>
 				);
 		});
 
-		const players = playerinfo.map((playerinfo, index) => {
-			console.log(playerinfo);
+		const leaderboard = this.state.playerInfo.map((playerinfo, index) => {
 			return(
 					<ListItem
-					style={{fontSize: 20}}
+					style={ {fontSize: 20} }
 					key={ index }
-					primaryText={playerinfo.playerName}
-					rightIcon={<p style={{margin: 16}}> {playerinfo.score}</p>}
-					leftIcon={<p style={{margin: 16}}> { index + 1 + '.'} </p>}/>
+					primaryText={ playerinfo.playerName }
+					rightIcon={ <p style={ {margin: 16} }> { playerinfo.score }</p> }
+					leftIcon={ <p style={ {margin: 16} }> { index + 1 + '.' } </p> }/>
 				);
 		});
 
 		return (
 			<div>
-			<Dialog
-			title={<div><p style={{marginLeft: '30%'}}> Moving to the Next Question.. </p>{this.state.showCircularProgress ?
-					<CircularProgress
-					style={{marginLeft: '44%'}}
-					size={60}
-					thickness={8}
-					/> : null}</div> }
-			open={this.state.open}>
-			</Dialog>
+				<Dialog
+					title={<p style={{textAlign: 'center', fontSize: 50, marginTop: 0}}> Quiz Ended</p>}
+					open={ this.state.quizEnd}
+				>
+				{leaderboard}
+				</Dialog>
+				<Dialog
+				 title={<div> 
+				 					<p style={{marginLeft: '30%'}}> Moving to the Next Question.. </p>
+				 					{this.state.showCircularProgress ?
+										<CircularProgress
+										style={{marginLeft: '44%'}}
+										size={60}
+										thickness={8}
+										/> : null}
+								</div> }
+				open={this.state.open}>
+				</Dialog>
 				<Grid>
 					<Paper>
 						<p style={{textAlign: 'center', fontSize: 50, marginTop: 0}}>
@@ -105,7 +161,7 @@ class QuizTile extends Component {
 				<Grid style={{width: '60%'}}>
 					<Row>
 						<Paper zDepth={1} style={{backgroundColor: '#FFFFFF', textAlign: 'center', fontSize: 35, fontWeight: 'bold', padding: '2vh', marginTop: 20, marginLeft: 10}}>
-							{question}
+							{this.state.question}
 						</Paper>
 					</Row>
 						<Row>
@@ -125,11 +181,11 @@ class QuizTile extends Component {
 					leftIcon={<p style={{margin: 16}}> No</p>}
 					/>
 						<Divider />
-						{players}
+						{leaderboard}
 					</List>
 				</Grid>
 			</div>
-			);
+		);
 	}
 }
 

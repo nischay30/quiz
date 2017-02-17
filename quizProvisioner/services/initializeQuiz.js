@@ -2,7 +2,7 @@ const client = require('./getRedisClient').duplicate();
 const async = require('async');
 
 module.exports = (quizId) => {
-	async.parallel([
+ 	async.parallel([
 		getAllPlayersFromQueue.bind(null, quizId),
 		getQuestions.bind(null ,quizId)
 		], (err, results) => {
@@ -23,13 +23,19 @@ function getQuestions(quizId, callback) {
 }
 
 function setQuestionsInQueue(quizId, questions, callback) {
+	client.lpush('questions#'+ quizId, JSON.stringify(questions), (err, res)=> {
+		callback();
+	});
+}
+
+/*function setQuestionsInQueue(quizId, questions, callback) {
 	async.each(questions, (question, internalCallback) => {
 		client.lpush('questions#' + quizId, JSON.stringify(question), (err, res) => {
 			if(err) {callback(err); return;}
 			internalCallback(null);
 		});
 	}, callback);
-}
+}*/
 
 // Initialzie Players scores to Zero
 function mapPlayerScores(quizId, players) {
@@ -38,5 +44,10 @@ function mapPlayerScores(quizId, players) {
 			if(err) { console.log(err); return; }
 			internalCallback(null);
 		});
-	});
+	}, intimateServer.bind(null, quizId));
+}
+
+function intimateServer(quizId) {
+	console.log('Hello server intimated');
+	client.publish('events', quizId);
 }
