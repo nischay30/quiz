@@ -1,0 +1,39 @@
+version: "2"
+services:
+  web:
+    build: './quizWeb'
+    image: 'quizweb'
+    ports:
+      - 8080:8080
+    links:
+      - redis
+    depends_on:
+      - redis
+    environment: 
+      REDIS_PORT: 6379
+      REDIS_HOST: redis
+      EXPRESS_PORT: 8080
+  provisioner:
+    build: './quizProvisioner'
+    image: provisioner
+    links:
+      - redis
+    depends_on:
+      - redis
+    environment: 
+      REDIS_PORT: 6379
+      REDIS_HOST: redis
+  controller:
+    build: './quizController'
+    image: 'controller'
+    links:
+      - redis
+    depends_on: 
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+  redis:
+    image: redis
+    ports:
+      - 6379:6379

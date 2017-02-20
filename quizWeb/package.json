@@ -21,6 +21,7 @@
     "superagent": "^3.4.1"
   },
   "scripts": {
+    "express": "node server/bin/www",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

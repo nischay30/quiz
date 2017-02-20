@@ -16,7 +16,6 @@ const style = {
 		fontSize: 20
 	}
 }
-const quizId = 123;
 
 class QuizTile extends Component {
 
@@ -74,12 +73,12 @@ class QuizTile extends Component {
 		}, 1000);
 	}
 
-	handleAnswer (answeredIndex) {
+	handleAnswer = (answeredIndex) => {
 		if(answeredIndex + 1 === this.state.answer) {
-			this.context.socket.emit('playerAnswered', '123', 5);
+			this.context.socket.emit('playerAnswered', this.props.quizId , 5);
 		}
 		else {
-			this.context.socket.emit('playerAnswered', '123', 0);
+			this.context.socket.emit('playerAnswered', this.props.quizId, 0);
 		}
 		this.setState({showCircularProgress: true, open: true});
 	}
@@ -101,7 +100,6 @@ class QuizTile extends Component {
 		});
 		this.runTimer();
 		}
-		// this.context.socket.emit('nextQuestion', quizId);
 	}
 
 	render() {

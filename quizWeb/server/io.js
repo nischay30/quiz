@@ -1,5 +1,4 @@
-const redis = require('redis');
-const subscribeClient = redis.createClient(6379, 'localhost');
+const subscribeClient = require('./services/getRedisClient').duplicate();
 
 const sendQuestionFlagController = require('./services/sendQuestionFlagController');
 const sendScoreFlagController = require('./services/sendScoreFlagController');
@@ -10,9 +9,6 @@ const sendScoresToClient = require('./services/sendScoresToClient');
 module.exports = (http) => {
 	const io = require('socket.io')(http);
 	subscribeClient.subscribe('events');
-	subscribeClient.subscribe('question');
-	subscribeClient.subscribe('scores');
-
 	subscribeClient.on('message', (channel, message) => {
 		switch(channel) {
 			// in this case message is quizId
@@ -22,13 +18,16 @@ module.exports = (http) => {
 	});
 
 	io.on('connection', (socket) => {
+	const personalClient = require('./services/getRedisClient').duplicate();
+
 		socket.on('message', (quizId) => {
+		personalClient.subscribe('question#' + quizId.quizId);
+		personalClient.subscribe('scores#' + quizId.quizId);
 			require('./services/sendPlayerInfoToProvisioner')(quizId.quizId, socket.conn.id);
 		});
 
 		// This will fetch the next question from Redis
 		socket.on('nextQuestion', (quizId) => {
-			console.log('Next question needed');
 			sendQuestionFlagController(quizId);
 		});
 
@@ -37,15 +36,15 @@ module.exports = (http) => {
 			sendScoreFlagController(quizId, socket.conn.id, scoreToIncrement);
 		});
 
-		subscribeClient.on('message', (channel, message) => {
-			switch(channel) {
-				// in this case message will be question
-				case 'question': sendQuestionToClient(message, socket)
-	    									 break;
+		personalClient.on('message', (channel, message) => {
+			console.log('Channel', channel);
+			console.log('message', message);
+
+			if(channel.match(new RegExp('question#*')))
+				 sendQuestionToClient(message, socket);
 				// in this case message will be scores
-				case 'scores': sendScoresToClient(message, socket)
-	   									 break;
-			}
+				else 
+					sendScoresToClient(message, socket);
 		});
 	});
 }

@@ -8,8 +8,8 @@ class ContextComponent extends Component {
 		// eslint-disable-next-line
 		let socket = io(config.serverUrl);
 		socket.on('connect', () => {
-					socket.send({quizId: 123});
-		});		
+					socket.send({quizId: this.props.params.quizId});
+		});
 		this.state = {
 			socket: socket,
 			serverUrl: config.serverUrl
@@ -23,6 +23,12 @@ class ContextComponent extends Component {
 		});
 	}
 
+	static get contextTypes() {
+		return({
+			router: React.PropTypes.object.isRequired
+		});
+	}
+
 	static get propTypes() {
 		return({
 			children: React.PropTypes.object.isRequired
@@ -33,6 +39,12 @@ class ContextComponent extends Component {
 		return({
 			socket: this.state.socket,
 			serverUrl: this.state.serverUrl
+		});
+	}
+
+	componentDidMount () {
+			this.state.socket.on('players', (data) => {
+			this.context.router.push('/' + this.props.params.quizId + '/quiz');
 		});
 	}
 

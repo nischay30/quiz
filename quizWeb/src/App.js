@@ -15,10 +15,10 @@ class App extends Component {
     return (
      <MuiThemeProvider>
       <Router history={hashHistory}>
-        <Route path='/' component={ContextComponent} >
+        <Route path='/:quizId' component={ContextComponent} >
         	<IndexRoute component={WaitingScreen} />
-          <Route path='quiz' component={QuizPlay} />
-        </Route>
+          <Route path='/:quizId/quiz' component={QuizPlay} /> 
+       </Route>
       </Router>
       </MuiThemeProvider>
     );

@@ -8,13 +8,6 @@ class WaitingPlayers extends Component {
 		});
 	}
 
-	componentDidMount() {
-		this.context.socket.on('players', (data) => {
-			this.context.router.push('/quiz');
-			console.log(data);
-		});
-	}
-
 	render() {
 		return(
 			<div>

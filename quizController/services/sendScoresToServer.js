@@ -12,6 +12,6 @@ module.exports = (quizId) => {
 			}
 			players.push(playerInfo);
 		}
-		publishClient.publish('scores', JSON.stringify(players));
+		publishClient.publish('scores#' +quizId, JSON.stringify(players));
 	});
 }
