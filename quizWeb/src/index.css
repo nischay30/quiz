@@ -1,6 +1,26 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #80CBC4;
   font-family: sans-serif;
+  background-image: url('../images/Background.jpg');
+  background-repeat: no-repeat;
+  background-position: fixed;
+  background-size: 85%;
 }
+.CircularProgressbar .CircularProgressbar-path {
+  stroke: #3e98c7;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease 0s;
+}
+
+.CircularProgressbar .CircularProgressbar-trail {
+  stroke: #d6d6d6;
+}
+
+.CircularProgressbar .CircularProgressbar-text {
+  fill: #3e98c7;
+  font-size: 20px;
+  dominant-baseline: middle;
+  text-anchor: middle;
+}
+
