@@ -12,6 +12,22 @@ module.exports = (quizId) => {
 			}
 			players.push(playerInfo);
 		}
-		publishClient.publish('scores#' +quizId, JSON.stringify(players));
+		sortPlayerScores(players, quizId, publishToServer);
 	});
+}
+
+function sortPlayerScores(playerInfo, quizId, callback) {
+	const sortedPlayers = playerInfo.sort((player1, player2) => {
+		return (player2.score - player1.score);
+	});
+	send10PlayersInfo(sortedPlayers, quizId, callback);
+}
+
+function send10PlayersInfo(sortedPlayers, quizId, callback) {
+		const slicedPlayers = sortedPlayers.slice(0, 10);
+		callback(slicedPlayers, quizId);
+}
+
+function publishToServer(players, quizId) {
+	publishClient.publish('scores#' +quizId, JSON.stringify(players));
 }

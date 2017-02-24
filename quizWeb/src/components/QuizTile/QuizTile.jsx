@@ -1,12 +1,25 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
+import Dialog from 'material-ui/Dialog';
+import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
-import {Card, CardHeader} from 'material-ui/Card';
+import { Card, CardHeader } from 'material-ui/Card';
 import { Grid,Col,Row} from 'react-flexbox-grid';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
-import CircularProgress from 'material-ui/CircularProgress';
-import Dialog from 'material-ui/Dialog';
+
+  const timerStyle = {
+    height: 100,
+    width: 100,
+    position:'fixed',
+    textAlign: 'center',
+    padding:33,
+    top: '35%',
+    right: '60.1%',
+    color: 'red',
+    backgroundColor: 'black',
+    fontSize: 34
+  }
 
  const cardheadstyle = {
    background:'#5D605C',
@@ -59,12 +72,12 @@ class QuizTile extends Component {
 
 componentDidMount () {
     this.context.socket.on('question', (question) => {
-      let questio = question.questions.shift();
+      let tempQuestion = question.questions.shift();
       this.setState({
-        question: questio.question,
-        options: questio.options,
-        answer: questio.answer,
-        timer: questio.timer,
+        question: tempQuestion.question,
+        options: tempQuestion.options,
+        answer: tempQuestion.answer,
+        timer: tempQuestion.timer,
         questions: question.questions 
       });
       this.runTimer();
@@ -100,21 +113,20 @@ componentDidMount () {
   }
 
   handleNextQuestion() {
-    console.log(this.state.questions);
     if(this.state.questions.length === 0) {
       this.setState({ quizEnd: true, showCircularProgress: false, open: false });
     }
     else {
-    let questio = this.state.questions.shift();
-    this.setState({
-      question: questio.question,
-      options: questio.options,
-      answer: questio.answer,
-      timer: questio.timer,
-      showCircularProgress: false,
-      open: false
-    });
-    this.runTimer();
+      let tempQuestion = this.state.questions.shift();
+      this.setState({
+        question: tempQuestion.question,
+        options: tempQuestion.options,
+        answer: tempQuestion.answer,
+        timer: tempQuestion.timer,
+        showCircularProgress: false,
+        open: false
+      });
+      this.runTimer();
     }
   }
 
@@ -135,7 +147,28 @@ componentDidMount () {
       );
     });
 
-    const leaderboard = this.state.playerInfo.map((playerinfo, index) => {
+    const question = () => {
+      return(
+        <Paper style={ queStyle } zDepth={ 3 }>
+          <Card>
+            <CardHeader title="Quiz Name" style={ cardheadstyle } titleStyle={ title } titleColor='white' subtitleColor='white'>
+              <h2 style={{textAlign:'Right', marginTop:'0px', color: '#D32F2F', marginBottom:'0px'}}>
+              </h2> 
+            </CardHeader>
+            <h3 style={{marginLeft:'2%'}}>
+              { this.state.question }
+            </h3>
+            <Divider />
+            <Row center='xs'>
+             { options }
+            </Row>
+            <Divider />
+          </Card>
+        </Paper>
+      );
+    }
+
+    const leaderboardRows = this.state.playerInfo.map((playerinfo, index) => {
       return(
         <TableRow key={ index }> 
            <TableRowColumn>{ index + 1 + '.'}</TableRowColumn> 
@@ -145,28 +178,64 @@ componentDidMount () {
       );
     });
 
+    const leaderboard = () => {
+      return(
+        <Table style={{width:'100%'}}>
+          <TableHeader displaySelectAll={ false } adjustForCheckbox={ false }>
+            <TableRow style={{background:'#5D605C'}}>
+              <TableHeaderColumn colSpan="3" style={{textAlign: 'center'}}>
+                <h2 style={{color:'#FFFFFF'}}>
+                  Leader Board
+                </h2>
+              </TableHeaderColumn>
+            </TableRow>
+            <TableRow>
+              <TableHeaderColumn >
+                <h3 style={{color:'#034346'}}>
+                  Sr NO.
+                </h3>
+              </TableHeaderColumn>
+              <TableHeaderColumn >
+                <h3 style={{color:'#034346'}}>
+                  Name
+                </h3>
+              </TableHeaderColumn>
+              <TableHeaderColumn >
+                <h3 style={{color:'#034346'}}>
+                  Points
+                </h3>
+              </TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody displayRowCheckbox={ false }>
+            { leaderboardRows }
+          </TableBody>
+        </Table>
+      );
+    }
+
     const movingNextQuestion = () => {
       return(
-          <Dialog
-            title={
-              <div> 
-                <p style={{marginLeft: '30%'}}>
-                  Moving to the Next Question..
-                </p>
-                { this.state.showCircularProgress ?
-                    <CircularProgress
-                      style={{marginLeft: '44%'}}
-                      size={ 60 }
-                      thickness={ 8 }
-                      /> 
-                  : 
-                    null
-                }
-              </div> 
-            }
-            open={ this.state.open } 
-          />
-        );
+        <Dialog
+          title={
+            <div> 
+              <p style={{marginLeft: '30%'}}>
+                Moving to the Next Question..
+              </p>
+              { this.state.showCircularProgress ?
+                  <CircularProgress
+                    style={{marginLeft: '44%'}}
+                    size={ 60 }
+                    thickness={ 8 }
+                    /> 
+                : 
+                  null
+              }
+            </div> 
+          }
+          open={ this.state.open } 
+        />
+      );
     }
 
     const quizEnd = () => {
@@ -175,12 +244,11 @@ componentDidMount () {
           title={
             <p style={{textAlign: 'center', fontSize: 50, marginTop: 0}}> 
               Quiz Ended
-              <Divider />
             </p>
           }
           open={ this.state.quizEnd }
         >
-        { leaderboard }
+        { leaderboard() }
         </Dialog>
       );
     }
@@ -189,60 +257,17 @@ componentDidMount () {
       <div>
         { movingNextQuestion() }
         { quizEnd() }
+        <Paper style= {timerStyle} zDepth={ 2 } circle={ true }>
+          { this.state.timer }
+        </Paper>
         <Grid >
           <Row>
             <Col xs={ 8 }>
-              <Paper style={ queStyle } zDepth={ 3 }>
-                <Card> 
-                  <CardHeader title="Quiz Name" style={ cardheadstyle } titleStyle={ title } titleColor='white' subtitleColor='white'>
-                    <h2 style={{textAlign:'Right', marginTop:'0px', color: '#D32F2F', marginBottom:'0px'}}>
-                      Time Left:- 00:00: { this.state.timer }
-                    </h2>
-                  </CardHeader>
-                  <h3 style={{marginLeft:'2%'}}>
-                    { this.state.question }
-                  </h3>
-                  <Divider />
-                  <Row center='xs'>
-                   { options }
-                  </Row>
-                  <Divider />
-                </Card>
-              </Paper>
+              { question() }
             </Col>
             <Col xs={ 4 }>
               <Paper style={{width:'100%', marginTop:'30.5%'}} zDepth={ 3 }>
-                <Table style={{width:'100%'}}>
-                  <TableHeader displaySelectAll={ false } adjustForCheckbox={ false }>
-                    <TableRow style={{background:'#5D605C'}}>
-                      <TableHeaderColumn colSpan="3"  style={{textAlign: 'center'}}>
-                        <h2 style={{color:'#FFFFFF'}}>
-                          Leader Board
-                        </h2>
-                      </TableHeaderColumn>
-                    </TableRow>
-                    <TableRow >
-                      <TableHeaderColumn >
-                        <h3 style={{color:'#034346'}}>
-                          Sr NO.
-                        </h3>
-                      </TableHeaderColumn>
-                      <TableHeaderColumn >
-                        <h3 style={{color:'#034346'}}>
-                          Name
-                        </h3>
-                      </TableHeaderColumn>
-                      <TableHeaderColumn >
-                        <h3 style={{color:'#034346'}}>
-                          Points
-                        </h3>
-                      </TableHeaderColumn>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody displayRowCheckbox={ false }>
-                    { leaderboard }
-                  </TableBody>
-                </Table>
+                { leaderboard() }
               </Paper>
             </Col>
           </Row>
