@@ -5,7 +5,7 @@ import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardHeader } from 'material-ui/Card';
-import { Grid,Col,Row} from 'react-flexbox-grid';
+import { Grid, Col, Row} from 'react-flexbox-grid';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
   const timerStyle = {
@@ -257,7 +257,7 @@ componentDidMount () {
       <div>
         { movingNextQuestion() }
         { quizEnd() }
-        <Paper style= {timerStyle} zDepth={ 2 } circle={ true }>
+        <Paper style={ timerStyle } zDepth={ 2 } circle={ true }>
           { this.state.timer }
         </Paper>
         <Grid >

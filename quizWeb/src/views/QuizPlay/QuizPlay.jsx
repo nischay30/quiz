@@ -4,7 +4,7 @@ import QuizTile from '../../components/QuizTile';
 class QuizPlay extends Component {
 	render() {
 		return (
-				<QuizTile quizId= {this.props.params.quizId}/>
+				<QuizTile quizId={this.props.params.quizId}/>
 			);
 	}
 }

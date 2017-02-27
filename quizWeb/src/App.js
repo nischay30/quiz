@@ -6,9 +6,12 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 import {dark700, teal700} from 'material-ui/styles/colors';
 
+import Login from './views/Login';
 import QuizPlay from './views/QuizPlay';
 import ContextComponent from './components/ContextComponent';
 import WaitingScreen from './views/WaitingScreen';
+import QuizCreations from './views/QuizCreations';
+import CreateQuiz from './components/CreateQuiz';
 
 injectTapEventPlugin();
 
@@ -23,13 +26,17 @@ const muiTheme = getMuiTheme({
 class App extends Component {
   render() {
     return (
-     <MuiThemeProvider muiTheme={muiTheme}>
-      <Router history={hashHistory}>
-        <Route path='/:quizId' component={ContextComponent} >
-        	<IndexRoute component={WaitingScreen} />
-          <Route path='/:quizId/quiz' component={QuizPlay} /> 
-       </Route>
-      </Router>
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <Router history={hashHistory}>
+          <Route path='/' component={ Login } />
+          <Route path='/quiz/:quizId' component={ ContextComponent } >
+        	  <IndexRoute component={ WaitingScreen } />
+            <Route path='/quiz/:quizId/play' component={ QuizPlay } />
+          </Route>
+          <Route path='/admin' component={ QuizCreations }>
+            <Route path='quizCreate' component={ CreateQuiz }/>
+          </Route>
+        </Router>
       </MuiThemeProvider>
     );
   }

@@ -44,7 +44,7 @@ class ContextComponent extends Component {
 
 	componentDidMount () {
 			this.state.socket.on('players', (data) => {
-			this.context.router.push('/' + this.props.params.quizId + '/quiz');
+			this.context.router.push('/quiz/' + this.props.params.quizId + '/play');
 		});
 	}
 
