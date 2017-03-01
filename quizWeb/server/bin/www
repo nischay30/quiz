@@ -14,6 +14,8 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 app.use(require(path.join(__dirname, '..', 'api')));
 
+require(path.join(__dirname, '..', 'db.js'));
+
 const server = http.createServer(app);
 io(server);
 

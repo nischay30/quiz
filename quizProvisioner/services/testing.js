@@ -6,34 +6,34 @@
 const client = require('./getRedisClient');
 
 const questions = [{
-	question: "hi this is question1",
-	options: ["option1", "option2", "option3", "option4"],
+	question: "Which of the following Blockchains does not do mining?",
+	options: ["Ethereum", "Hyperledger", "Bitcoin", "None of the Above"],
 	timer: 5,
 	answer: 2
 
 },{
-	question: "hi this is question2",
-	options: ["option1", "option2", "option3", "option4"],
+	question: "Which of the following Blockchains does not do mining?",
+	options: ["Ethereum", "Hyperledger", "Bitcoin", "None of the Above"],
 	timer: 5,
 	answer: 2
 },{
-	question: "hi this is question3",
-	options: ["option1", "option2", "option3", "option4"],
+	question: "Which of the following Blockchains does not do mining?",
+	options: ["Ethereum", "Hyperledger", "Bitcoin", "None of the Above"],
 	timer: 5,
 	answer: 2
 },{
-	question: "hi this is question4",
-	options: ["option1", "option2", "option3", "option4"],
+	question: "Which of the following Blockchains does not do mining?",
+	options: ["Ethereum", "Hyperledger", "Bitcoin", "None of the Above"],
 	timer: 5,
 	answer: 2
 },{
-	question: "hi this is question5",
-	options: ["option1", "option2", "option3", "option4"],
+	question: "Which of the following Blockchains does not do mining?",
+	options: ["Ethereum", "Hyperledger", "Bitcoin", "None of the Above"],
 	timer: 5,
 	answer: 2
 },{
-	question: "hi this is question25",
-	options: ["option1", "option2", "option3", "option4"],
+	question: "Which of the following Blockchains does not do mining?",
+	options: ["Ethereum", "Hyperledger", "Bitcoin", "None of the Above"],
 	timer: 6,
 	answer: 2
 }]

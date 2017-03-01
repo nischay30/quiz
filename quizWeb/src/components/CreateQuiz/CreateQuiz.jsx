@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
+import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
+import TextField from 'material-ui/TextField';
+import Subheader from 'material-ui/Subheader';
 
 import Upload from 'material-ui/svg-icons/file/file-upload';
 import WriteNew  from 'material-ui/svg-icons/action/note-add';
@@ -15,14 +18,14 @@ const config = require('../../config');
 
 const styles = {
 	tabHead:{
-		backgroundColor: '#5D605C', 
+		background: '#5D605C', 
 		fontWeight:'bold',
-		fontSize:15
+		fontSize:20
 	},
 	headline: {
 		fontSize: 24,
-		paddingTop: 20,
-		marginBottom: 18,
+		paddingTop: 18,
+		marginBottom: 20,
 	},
 	button:{
 		background:'C4BBBB',
@@ -47,29 +50,46 @@ class CreateQuiz extends  Component {
 		constructor(props) {
 		super(props);
 		this.state = {
+			quizName: '',
+			trainingNumber: '',
+			time: '',
 			files: [{name: 'Choose CSV file from your system'}],
 			value: 'a',
-			uploadButtonState: true,
 			uploadDialogState: false,
 			questions: [],
-			previewDialogState: false
+			previewDialogState: false,
+			quizSavedState: false,
+			titleQuizSaved: '',
+			messageQuizSaved: ''
 		}
 	}
 
 	handleFileChange(event) {
-		this.setState({ files: event.target.files, uploadButtonState: false});
+		this.setState({ files: event.target.files });
 	}
 
 	handleTabChange = (value) => {
 		this.setState({	value: value });
-	};
+	}
+
+	handleQuizNameChange = (event) => {
+		this.setState({ quizName: event.target.value });
+	}
+
+	handleTrainingNumberChange = (event) => {
+		this.setState({ trainingNumber: event.target.value });
+	}
+
+	hanldeTimeChange = (event) => {
+		this.setState({ time: event.target.value });
+	}
 
 	handleFormSubmit(event) {
 		event.preventDefault();
 		let reader = new FileReader();
 	  reader.readAsText(this.state.files[0]);
 	  reader.onload = (content) => {
-	  	this.sendDataToServer(content.target.result);
+	  	this.sendFileToServer(content.target.result);
 	 	};
 	  reader.onloadstart = (content) => this.setState({ uploadDialogState: true }); 
 	}
@@ -78,7 +98,44 @@ class CreateQuiz extends  Component {
 		this.setState({previewDialogState: false});
 	}
 
-	sendDataToServer(data) {
+	clearState = () => {
+		this.setState({
+			quizName: '',
+			trainingNumber: '',
+			time: '',
+			files: [{name: 'Choose CSV file from your system'}],
+			value: 'a',
+			uploadDialogState: false,
+			questions: [],
+			previewDialogState: false
+		});
+	}
+
+	handleSave = (quizName, trainingNumber, time, questions) => {
+		const tempObject={
+			quizName,
+			trainingNumber,
+			time,
+			questions
+		}
+
+		console.log(tempObject);
+		request
+		.post(config.serverUrl + '/saveQuiz')
+		.send({tempObject})
+		.end((err, res) => {
+			if(err) { console.log('Err:', err); return; }
+			this.setState(res.body);
+			document.getElementById('submitForm').reset();
+			this.clearState();
+		});
+	}
+
+	handleQuizSavedClose = () => {
+		this.setState({ quizSavedState: false });
+	}
+
+	sendFileToServer(data) {
 		request
 		.post(config.serverUrl + '/createQuiz')
 		.send({data: data})
@@ -89,6 +146,29 @@ class CreateQuiz extends  Component {
 	}
 
 	render() {
+		const quizSaved = () => {
+			const actions = [
+				<FlatButton
+					label='OK'
+					primary={ true }
+					onTouchTap={ this.handleQuizSavedClose }
+				/>
+			]
+			return(
+				<Dialog
+				  title={ this.state.titleQuizSaved }
+					open={ this.state.quizSavedState }
+					actions={ actions }
+				>
+					<Subheader
+						style={{ textAlign: 'center' }}
+					>
+						{ this.state.messageQuizSaved } 
+					</Subheader>
+				</Dialog>
+			);
+		}
+
 	  const uploadDialog = () => {
 	    return(
 	      <Dialog
@@ -111,11 +191,16 @@ class CreateQuiz extends  Component {
 
 		return(
 			<div>
+				{ quizSaved() }
 			  { uploadDialog() }
 			  <PreviewDialog
 				  open={ this.state.previewDialogState }
-				  close={ this.handleClose} 
-				  questions={ this.state.questions}
+				  cancel={ this.handleClose }
+				  save={ this.handleSave } 
+				  questions={ this.state.questions }
+				  quizName={ this.state.quizName }
+				  trainingNumber={ this.state.trainingNumber }
+				  time={ this.state.time }
 			  />
 				<Paper>
 					<Tabs
@@ -123,15 +208,50 @@ class CreateQuiz extends  Component {
 						onChange={ this.handleTabChange }
 					>
 						<Tab icon={<Upload />} label="Upload Questions" value="a" style={styles.tabHead}>
-							<div>
-								<div style={{marginTop:'2%', marginBottom:'3%', textAlign:'center'}}>
+							<form
+							  id='submitForm'
+								encType='multipart/form-data'
+								onSubmit={ this.handleFormSubmit.bind(this)}
+							>
+	 							<div style={{textAlign: 'left', marginLeft:'34%'}}>
+									<label style={{margin: 10, fontWeight: 'bold', fontSize: 20}}> Enter Quiz Name </label>
+										<TextField
+											type='text'
+											required
+											value={ this.state.quizName }
+											onChange={ this.handleQuizNameChange }
+										  inputStyle={{color: 'red'}}
+											hintText='Quiz Name'
+										/>
+										<br />
+										<label style={{margin: 10, fontWeight: 'bold', fontSize: 20}}> Enter Training Number </label>
+										<TextField
+											type='text'
+											required
+											value={ this.state.trainingNumber }
+											onChange={ this.handleTrainingNumberChange }
+										  inputStyle={{color: 'red'}}
+											hintText='Training Number'
+										/>
+										<br />
+										<label style={{margin: 10, fontWeight: 'bold', fontSize: 20}}> Time Per Question </label>
+										<TextField
+											type='number'
+											required
+											value={ this.state.time }
+											onChange={ this.hanldeTimeChange }
+										  inputStyle={{color: 'red'}}
+											hintText='Time'
+											min='1'
+										/>seconds
+									</div>
+								<div style={{marginTop:'1%', marginBottom:'3%', textAlign:'center'}}>
 									<h2 style={styles.headline}>
 										Upload Your Excel File
 									</h2>
 									<p>
 										{ this.state.files[0]['name'] }
 									</p>
-									<form encType='multipart/form-data' onSubmit={ this.handleFormSubmit.bind(this)}>
 										<RaisedButton
 											icon={<FileIcon/>}
 											label="Choose Excel file....."
@@ -140,18 +260,16 @@ class CreateQuiz extends  Component {
 											labelStyle={ styles.buttonLabel }
 											containerElement="label"
 										>
-											<input type="file"  style={styles.fileUpload} onChange={ this.handleFileChange.bind(this) }/>
+											<input type="file" required accept='.csv' style={styles.fileUpload} onChange={ this.handleFileChange.bind(this) }/>
 										</RaisedButton>
 										<RaisedButton
 											label='Uplaod File'
 											primary={ true }
 											type='submit'
 											style={{marginLeft: 20}}
-											disabled={this.state.uploadButtonState}
 										/>
-									</form>
 								</div>
-							</div>
+							</form>
 						</Tab>
 						<Tab icon={<WriteNew/>} label="Manual Creation" value="b" style={styles.tabHead} >
 							<div>

@@ -24,17 +24,14 @@ module.exports = (csv, callback) => {
 				tempObject[headers[headerCount]] = stringedColumns[j];
 			}
 		}
-		let options = [
-			{ option1: tempObject.option1 },
-			{ option2: tempObject.option2 },
-			{ option3: tempObject.option3 },
-			{ option4: tempObject.option4 }
-		]
+		let options = [ tempObject.option1, tempObject.option2, tempObject.option3, tempObject.option4];
+		const answer = tempObject['answer'];
 		delete tempObject.option1;
 		delete tempObject.option2;
 		delete tempObject.option3;
 		delete tempObject.option4;
 		tempObject['options'] = options;
+		tempObject['answer'] = answer;		
 		finalArray.push(tempObject);
 	}
 	callback(null, finalArray);
