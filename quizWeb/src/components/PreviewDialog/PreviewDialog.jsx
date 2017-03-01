@@ -34,14 +34,15 @@ class PreviewDialog  extends Component {
     const trainingNumber = this.props.trainingNumber;
     const time = this.props.time;
     const questions = this.props.questions;
-    this.props.save(quizName, trainingNumber, time, questions);
+    const userName = localStorage.userName;
+    this.props.save(quizName, trainingNumber, time, questions, userName);
   }
 
   render() {
     function getOptions(inputOptions, answer) {
       const options = inputOptions.map((option, index) => {
         let color = false;
-        if(option === answer) {
+        if(option.trim() === answer.trim()) {
           color = true;
         }
         return(
@@ -52,7 +53,7 @@ class PreviewDialog  extends Component {
               labelStyle={{ color:'#000000', fontWeight:'bold' }}
             >
               <Avatar backgroundColor='#226901' size={ 32 }>{ index + 1 }</Avatar>
-              { option }
+              { option.trim() }
             </Chip>
           </Col>
         );

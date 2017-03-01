@@ -31,7 +31,7 @@ class HomeAppBar extends Component {
 
   redirectToViewQuiz = () => {
     this.setState({ open: false });
-    this.context.router.push('/admin/viewQuiz');
+    this.context.router.push('/admin/quizView');
   }
 
   handleLogOut = () => {

@@ -48,6 +48,7 @@ class LoginComponent extends Component {
 
   handleLogin = (event) => {
     event.preventDefault();
+    localStorage.setItem('userName', this.state.email); 
     this.setState({email: '', password: ''});
     this.context.router.push('/admin');
   }

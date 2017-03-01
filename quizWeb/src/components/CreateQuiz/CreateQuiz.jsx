@@ -91,7 +91,7 @@ class CreateQuiz extends  Component {
 	  reader.onload = (content) => {
 	  	this.sendFileToServer(content.target.result);
 	 	};
-	  reader.onloadstart = (content) => this.setState({ uploadDialogState: true }); 
+	  reader.onloadstart = (content) => this.setState({ uploadDialogState: true });
 	}
 
 	handleClose = () => {
@@ -111,12 +111,13 @@ class CreateQuiz extends  Component {
 		});
 	}
 
-	handleSave = (quizName, trainingNumber, time, questions) => {
+	handleSave = (quizName, trainingNumber, time, questions, userName) => {
 		const tempObject={
 			quizName,
 			trainingNumber,
 			time,
-			questions
+			questions,
+			userName
 		}
 
 		console.log(tempObject);

@@ -15,7 +15,11 @@ const quiz = new Schema({
 
 const user = new Schema({
   userName: { type: 'String', required: true, unique: true },
-  quiz:[]
+  quiz:[{
+    trainingNumber: { type: 'String', required: true },
+    created: { type: Date, default: Date.now },
+    quizName: { type: 'String', required: true }
+  }]
 });
 
 module.exports = {

@@ -12,6 +12,7 @@ import ContextComponent from './components/ContextComponent';
 import WaitingScreen from './views/WaitingScreen';
 import QuizCreations from './views/QuizCreations';
 import CreateQuiz from './components/CreateQuiz';
+import ViewQuiz from './components/ViewQuiz';
 
 injectTapEventPlugin();
 
@@ -35,6 +36,7 @@ class App extends Component {
           </Route>
           <Route path='/admin' component={ QuizCreations }>
             <Route path='quizCreate' component={ CreateQuiz }/>
+            <Route path='quizView' component={ ViewQuiz } />
           </Route>
         </Router>
       </MuiThemeProvider>
