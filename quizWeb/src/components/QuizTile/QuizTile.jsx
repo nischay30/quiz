@@ -78,7 +78,7 @@ componentDidMount () {
         options: tempQuestion.options,
         answer: tempQuestion.answer,
         timer: tempQuestion.timer,
-        questions: question.questions 
+        questions: question.questions
       });
       this.runTimer();
     });
@@ -102,8 +102,8 @@ componentDidMount () {
     }, 1000);
   }
 
-  handleAnswer = (answeredIndex) => {
-    if(answeredIndex + 1 === this.state.answer) {
+  handleAnswer = (answeredOption) => {
+    if(answeredOption.trim() === this.state.answer.trim()) {
       this.context.socket.emit('playerAnswered', this.props.quizId , 5);
     }
     else {
@@ -140,7 +140,7 @@ componentDidMount () {
               backgroundColor="#DADADA"
               labelStyle={{fontWeight: 'bold'}}
               style={ buttonStyle }
-              onTouchTap={ this.handleAnswer.bind(this, index) }
+              onTouchTap={ this.handleAnswer.bind(this, option) }
             />
           </label>
         </Col>
