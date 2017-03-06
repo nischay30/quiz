@@ -138,7 +138,7 @@ class CreateQuiz extends  Component {
 
 	sendFileToServer(data) {
 		request
-		.post(config.serverUrl + '/createQuiz')
+		.post(config.serverUrl + '/convertCsv')
 		.send({data: data})
 		.end((err, res) => {
 			if(err) { console.log('Err:', err); return;}

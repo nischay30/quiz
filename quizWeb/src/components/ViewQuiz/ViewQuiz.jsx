@@ -45,6 +45,15 @@ class ViewQuiz extends Component {
     });
   }
 
+  handleDeleteQuiz = (trainingNumber) => {
+    request
+    .get(config.serverUrl + '/deleteQuiz/'+ localStorage.userName + '/' + trainingNumber)
+    .end((err, res) => {
+      console.log(res);
+      this.setState({ quiz: res.body });
+    })
+  }
+
   render() {
     const noQuizDialog = () => {
       return(
@@ -58,6 +67,7 @@ class ViewQuiz extends Component {
     }
 
     const quizzes = this.state.quiz.map((singleQuiz, index) => {
+      const date = new Date(singleQuiz.created);
       return(
         <Col xs={6}>
           <Paper key={ index } style={{textAlign: "center", width: '100%'}}>
@@ -65,13 +75,19 @@ class ViewQuiz extends Component {
             { singleQuiz.quizName }
             </h2>
             <div style={{marginLeft: '20%'}}>
-              <h4>Created At: { singleQuiz.created }</h4>
+              <h4>Created At: { date.toString() }</h4>
               <h4>Training Number { singleQuiz.trainingNumber }</h4>
             </div>
             <Divider style={{marginTop:'2%'}}/>
             <div style={{textAlign:'center'}}>
               <RaisedButton icon={<EditIcon color='#F2F3F4'/>} style={styles.buttonStyle}  buttonStyle={{background:'#3498DB'}}  labelStyle={{color:'#FFFFFF',fontWeight:'bold'}}> </RaisedButton>
-              <RaisedButton icon={<DeleteTcon color='#F2F3F4'/>} style={styles.buttonStyle}  buttonStyle={{background:'#E74C3C  '}} labelStyle={{color:'#FFFFFF',fontWeight:'bold'}} > </RaisedButton>
+              <RaisedButton
+                icon={<DeleteTcon color='#F2F3F4'/>}
+                style={styles.buttonStyle}
+                buttonStyle={{background:'#E74C3C'}}
+                labelStyle={{color:'#FFFFFF',fontWeight:'bold'}}
+                onTouchTap={ this.handleDeleteQuiz.bind(null, singleQuiz.trainingNumber) } >
+              </RaisedButton>
               <RaisedButton icon={<PublishTcon color='#F2F3F4'/>} style={styles.buttonStyle} buttonStyle={{background:'#28B463'}} labelStyle={{color:'#FFFFFF',fontWeight:'bold'}} > </RaisedButton>
             </div>
           </Paper>
