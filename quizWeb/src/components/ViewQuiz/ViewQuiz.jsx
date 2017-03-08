@@ -77,7 +77,7 @@ class ViewQuiz extends Component {
     .get(url)
     .end((err, res) => {
       if(err) {
-        this.setState({ publisheQuizText: 'This Quiz is already published', publishedQuiz: true });
+        this.setState({ publisheQuizText: `This Quiz is already published and link is ${res.body.link}`, publishedQuiz: true });
       }
       else {
         this.setState({ publisheQuizText: `Quiz Published and link is ${res.body.link}`, publishedQuiz: true });        

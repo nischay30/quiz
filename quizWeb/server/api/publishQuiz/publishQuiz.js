@@ -10,9 +10,9 @@ module.exports = (req, res) => {
 		readQuestionsFromMongo.bind(null, req.params.trainingNumber),
 		setQuestionsToRedis.bind(null, req.params.trainingNumber)
 		], (err, results) => {
-		if(err) { res.sendStatus(400); return ;}
+		if(err) { res.status(400).json({link: 'localhost:3000/#/quiz/'+ req.params.trainingNumber}); return ;}
 		res.json({
-			link: 'localhost:3000/#/quiz/'+ req.params.trainingNumber,
+			link: 'localhost:3000/#/quiz/'+ req.params.trainingNumber
 		});
 	});
 }
