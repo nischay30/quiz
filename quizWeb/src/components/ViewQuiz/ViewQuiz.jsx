@@ -44,7 +44,7 @@ class ViewQuiz extends Component {
     .get(config.serverUrl + '/viewQuiz/' + localStorage.userName)
     .end((err, res) => {
         console.log(res);
-      if(!res.body || res.body.length === 0) {
+      if(!res || !res.body || res.body.length === 0) {
         this.setState({ noQuizDialog: true });
       }
       else {

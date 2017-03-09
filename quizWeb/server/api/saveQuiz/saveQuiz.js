@@ -11,7 +11,7 @@ module.exports = (req, res)=> {
 		saveQuiz.bind(null, payload),
 		checkIfUserExists.bind(null, userName, trainingNumber, quizName)
 		], (err, results) => {
-		if(err) { res.json(err); return; }
+		if(err) { console.log('Err:',err); res.json(err); return; }
 		res.json(results.shift());
 	});
 }
@@ -20,6 +20,7 @@ function saveQuiz(payload, callback) {
 	const quiz = new schema.quizSchema(payload);
 	quiz.save((err, res1) => {
 		if(err) {
+			console.log("Err:", err);
 			if(err.code === 11000) {
 				let tempObject = {
 					titleQuizSaved: 'Error',
@@ -38,6 +39,7 @@ function saveQuiz(payload, callback) {
 			}
 		}
 		else {
+			console.log('Success');
 			let tempObject = {
 				quizSavedState: true,
 				titleQuizSaved: 'Quiz Created Successfully...',
@@ -72,6 +74,7 @@ function updateUser(userName, trainingNumbers, callback) {
 }
 
 function checkIfUserExists(userName, trainingNumber, quizName, callback) {
+	console.log('User checking');
 	schema.userSchema.findOne({userName: userName}, (err, response) => {
 		if(err) {callback(err); return; }
 		if(response) {

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const quiz = new Schema({
-  trainingNumber: { type: String, required: true, unique: true },
+  trainingNumber: { type: 'String', required: true, unique: true },
 	quizName: { type: String, requried: true },
   questions: [{
   	answer: { type: String, required: true },
@@ -14,7 +14,7 @@ const quiz = new Schema({
 });
 
 const user = new Schema({
-  userName: { type: String, required: true, unique: true },
+  userName: { type: 'String', required: true, unique: true },
   quiz:[{
     trainingNumber: { type: String, required: true },
     created: { type: Date, default: Date.now },

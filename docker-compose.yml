@@ -41,6 +41,6 @@ services:
     ports:
       - 6379:6379
   mongo:
-    image: khezen/mongo:3.4
+    image: mongo
     ports:
      - 27017:27017
